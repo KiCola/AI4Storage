@@ -1,0 +1,326 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{mathrsfs,bm}
+
+\usepackage{geometry}
+\geometry{left=1.25in,right=1.25in,top=1in,bottom=1in}
+
+\usepackage{hyperref}
+\def\UrlBreaks{\do\A\do\B\do\C\do\D\do\E\do\F\do\G\do\H\do\I\do\J
+\do\K\do\L\do\M\do\N\do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V
+\do\W\do\X\do\Y\do\Z\do\[\do\\\do\]\do\^\do\_\do\`\do\a\do\b
+\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j\do\k\do\l\do\m\do\n
+\do\o\do\p\do\q\do\r\do\s\do\t\do\u\do\v\do\w\do\x\do\y\do\z
+\do\.\do\@\do\\\do\/\do\!\do\_\do\|\do\;\do\>\do\]\do\)\do\,
+\do\?\do\'\do+\do\=\do\#}
+\urlstyle{same}
+\hypersetup{
+  colorlinks = true,
+  linkcolor = black,
+  citecolor = blue,
+  filecolor = blue,
+  urlcolor = black,
+}
+\usepackage{color,xcolor}
+\usepackage{graphicx}
+\usepackage{epsfig}
+
+\usepackage{tabularx,array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{fancybox}
+
+\usepackage{listings}
+\usepackage{titletoc}
+\usepackage{titlesec}
+
+\usepackage{mathtools}
+\usepackage{fancyhdr}
+
+\renewcommand*{\baselinestretch}{1.5}
+
+\bibliographystyle{thuthesis-numeric}
+
+\usepackage[numbers,super,square,sort&compress]{natbib}
+\def\bibfont{\small}      % 修改参考文献字体
+\setlength{\bibsep}{8pt}  % 调整参考文献间距
+
+%%%%%%以下套用模板
+%----- 设置章节格式 -----
+\renewcommand{\thesection}{\chinese{section}、}
+\renewcommand{\thesubsection}{（\chinese{subsection}）}
+\renewcommand{\thesubsubsection}{\arabic{subsubsection}.}
+\titleformat{\section}{\bfseries \zihao{-3}}{\chinese{section}、}{0em}{}
+\titleformat{\subsection}{\bfseries \zihao{4}}{（\chinese{subsection}）}{0.2em}{}
+\titleformat{\subsubsection}{\bfseries \zihao{-4}}{\arabic{subsubsection}、}{0.2em}{}
+
+%----- 设置浮动体间距 ------
+\setlength{\textfloatsep}{0pt}
+\setlength{\floatsep}{10pt plus 3pt minus 2pt}
+\setlength{\intextsep}{10pt}
+\setlength{\abovecaptionskip}{2pt plus1pt minus1pt}
+\setlength{\belowcaptionskip}{3pt plus1pt minus2pt}
+%\setlength{\itemsep}{3pt plus1pt minus2pt}
+
+%-----设置图片的路径 -----
+\graphicspath{{./figure/}{./figures/}}
+
+%----- 设置公式间距为零 ------
+\AtBeginDocument{
+	\setlength{\abovedisplayskip}{5pt plus1pt minus1pt}
+	\setlength{\belowdisplayskip}{5pt plus1pt minus1pt}
+	\setlength{\abovedisplayshortskip}{2pt}
+	\setlength{\belowdisplayshortskip}{2pt}
+	\setlength{\arraycolsep}{2pt}
+}
+
+%----- 定义命令 -----
+\newcommand{\stunum}[1]{\def\defstunum{#1}}
+\newcommand{\class}[1]{\def\defclass{#1}}
+
+%----- maketitle -----
+\makeatletter
+\renewcommand\maketitle{
+\vspace*{1em}
+\begin{center}
+{\zihao{-2} \bfseries \@title }\\[1.5em]
+  姓名: \@author \quad 学号: \defstunum \\
+  班级: \defclass \\[10pt]
+\end{center}
+}
+
+
+%----- abstract -------
+\renewenvironment{abstract}{
+\phantomsection
+\addcontentsline{toc}{section}{摘要}
+\noindent\rule[0.1\baselineskip]{\textwidth}{0.5pt}
+\textbf{摘~要：}
+}{\par
+\noindent\rule[0.3\baselineskip]{\textwidth}{0.5pt}
+}
+\makeatother
+
+%----- 定义列表项的样式 -----
+\usepackage{enumitem}
+\setlist{nolistsep}
+
+%----- 设置英文字体 -----
+\usepackage{newtxtext}  
+
+%题目
+\title{数据库及优化：AI4DB}
+\author{赵泽儒}
+\stunum{U202211194}
+\class{2022\,级自动化类\,11\,班}
+\date{\today}
+
+
+\begin{document}
+
+\maketitle
+
+%摘要
+\begin{abstract}
+在现实中，数据、数据库管理系统及关联应用一起被称为数据库系统，简称为数据库。自20世纪60年代初诞生至今，数据库已经发生了翻天覆地的变化。然而，传统数据库的优化依赖于人工经验和规则，难以满足高性能数据库需求。AI的飞速发展，为数据库的优化提供了更具智能化的解决方案：利用机器学习与强化学习技术，将AI应用于数据库领域，得以有效解决性能瓶颈、提高数据库智能程度，降低人工成本。本篇文章作者从数据库的发展与限制出发，通过概述数据库相关技术及发展，形成对数据库的整体性系统性认知；继而引出AI优化DB的相关策略：机器学习和强化学习，从而概述数据库优化的背后原理；最后介绍CDBTune和Hunter等AI+DB的最新应用成果，并与传统数据库相比较，揭示新时代数据库技术发展方向，并对AI技术为数据库等领域带来的变革进行讨论研究。
+\medskip
+
+\noindent \textbf{关键词：}数据库，数据库调优，人工智能，强化学习，机器学习，AI4DB
+\end{abstract}
+
+%正文
+\section{引言}
+
+\textbf{数据库}是结构化信息或数据的有序集合，通常由数据库管理系统(DBMS)来控制。在现实中，数据、DBMS 及关联应用一起被称为数据库系统，简称为数据库。
+
+自20世纪60年代初诞生至今，数据库已经发生了翻天覆地的变化：数据量呈爆炸性增长，数据库实例不断增多，数据库越发复杂，数据库管理成为企业不可避免的问题。然而，传统数据库的优化依赖于人工经验和规则，难以满足高性能数据库需求。以数据调参为例，由于数据库参数量巨大，参数之间关系复杂，传统资深数据库工程师调参每 次平均耗时 6 小时，且往往不能取得较优结果。
+
+而AI的飞速发展，为数据库的优化提供了更具智能化的解决方案：利用机器学习与强化学习技术，将AI应用于数据库领域，得以有效解决性能瓶颈、提高数据库智能程度，降低人工成本。AI for DB是当前数据库领域热门方向，尤其是当下，如 ChatGPT、GPT4等模型爆发出了惊人的智能，使得数据库领域对AI接入的呼声越来越高，AI在数据库领域具有十足的应用潜力。
+
+\section{数据库技术}
+
+\subsection{数据库}
+数据库是结构化信息或数据的有序集合，一般以电子形式存储在计算机系统中。通常由数据库管理系统 (DBMS) 来控制。在现实中，数据、DBMS 及关联应用一起被称为数据库系统，通常简称为数据库。
+
+为了提高数据处理和查询效率，当今最常见的数据库通常以行和列的形式将数据存储在一系列的表中，支持用户便捷地访问、管理、修改、更新、控制和组织数据。另外，大多数数据库都使用结构化查询语言 (SQL) 来编写和查询数据。
+
+自 20 世纪 60 年代初诞生至今，数据库已经发生了翻天覆地的变化。最初，人们使用分层数据库（树形模型，仅支持一对多关系）和网络数据库（更加灵活，支持多种关系）这样的导航数据库来存储和操作数据。这些早期系统虽然简单，但缺乏灵活性。20 世纪 80 年代，关系数据库开始兴起；20 世纪 90 年代，面向对象的数据库开始成为主流。最近，随着互联网的快速发展，为了更快速地处理非结构化数据，NoSQL 数据库应运而生。现在，云数据库和自治驾驶数据库在数据收集、存储、管理和利用方面正不断取得新的突破\cite{01}。
+
+\subsection{数据库管理系统分类}
+
+\subsubsection{关系数据库}
+关系数据库是创建在关系模型基础上的数据库，借助于集合代数等数学概念和方法来处理数据库中的数据。现实世界中的各种实体以及实体之间的各种联系均用关系模型来表示。
+几乎所有的数据库管理系统都配备了一个开放式数据库连接（ODBC）驱动程序，令各个数据库之间得以互相集成。
+典型代表有：MySQL、Oracle、Microsoft SQL Server、Access、PostgreSQL、DB2、MariaDB
+
+\subsubsection{非关系型数据库 NoSQL}
+NoSQL 或非关系数据库，支持存储和操作非结构化及半结构化数据（与关系数据库相反，关系数据库定义了应如何组合插入数据库的数据）。随着 Web 应用的日益普及和复杂化，NoSQL 数据库得到了越来越广泛的应用。
+
+\subsubsection{分布式数据库}
+分布式数据库由位于不同站点的两个或多个文件组成。数据库可以存储在多台计算机上，位于同一个物理位置，或分散在不同的网络上。
+
+\subsubsection{云数据库}
+云数据库是指在私有云、公有云或混合云环境中构建、部署和访问的数据库。
+
+\subsubsection{自治驾驶数据库}
+基于云的自治驾驶数据库（也称作自治数据库）是一种全新的极具革新性的数据库，它利用基于云的技术和机器学习，自动执行管理数据库所需的各种日常任务，例如调优、安全性、备份、更新和其他日常管理任务。通过自动执行这些繁琐的任务，数据库管理员可以腾出时间去开展更具战略性的工作。自治数据库的自治驱动、自治安全和自治修复功能有望彻底改变数据的管理和保护方式，助力企业提升性能、降低成本、提高安全性。
+
+\subsection{大数据时代数据库的变化}
+大数据时代，数据库系统面临的需求在数据源、需提供的数据服务和所处的硬件环境等方面发生了根本性的变化。主要体现为以下三点：
+
+1.\textbf{数据量}  由TB级升至PB级,并仍在持续爆炸式增长。
+
+2.\textbf{分析需求}  由常规分析转向深度分析(Deep Analytics)。
+
+3.\textbf{硬件平台}  由高端服务器转向由中低端硬件构成的大规模机群平台\cite{01}。
+
+\subsection{数据库的新挑战}
+如今，大型企业数据库一般都支持高度复杂的查询，同时用户也希望数据库能近乎实时地响应查询。因此，数据库管理员经常需要采用各种方法来帮助企业改善性能。他们面临的一些常见挑战包括：
+
+\textbf{1.应对数据量的大幅增长} 来自传感器、联网设备和许多其他来源的数据呈爆炸式增长，使数据库管理员忙于有效地管理和组织他们公司的数据。
+
+\textbf{2.确保数据安全} 如今数据泄露无处不在，黑客们的攻击手段层出不穷。在确保数据安全的同时让用户能够轻松访问数据比以往任何时候都更重要。
+
+\textbf{3.满足个性化需求} 在当今快速发展的商业环境中，企业需要能够实时访问其数据，以便于及时做出决策并抓住新机遇。
+
+\textbf{4.管理和维护数据库与基础设施} 数据库管理员需要持续监视数据库中的问题并开展预防性维护，以及应用软件升级和打补丁。随着数据库的日益复杂和数据量的日益增长，企业需要招聘更多的人员来监视和调优数据库，开销也随之增加。
+
+\textbf{5.突破可扩展性限制} 为了生存下去，企业需要不断谋求发展，而其数据管理也必须随之发展。然而，数据库管理员很难预测公司未来究竟需要多大的数据容量，尤其是在采用本地部署数据库的情况下。
+
+\textbf{6.确保满足数据驻留、数据主权或延迟要求} 某些企业的使用场景更适合使用本地部署应用。对此，理想方案是使用预配置、预优化的集成系统来运行数据库\cite{03}。
+
+AI技术的蓬勃发展，为数据库的调优创造出全新的可能，有望为数据库带来革命性突破。
+
+\section{AI的盛世}
+\subsection{深度学习}
+深度学习（Deep learning, DL）作为机器学习领域一个重要的研究热点，已经在图像分析、语音识别、自然语言处理、视频分类等领域取得了令人瞩目的成功。DL的基本思想是通过多层的网络结构和非线性变换，组合低层特征，形成抽象的、易于区分的高层表示，以发现数据的分布式特征表示。因此DL方法侧重于对事物的感知和表达\cite{04}。
+
+\subsection{强化学习}
+强化学习（Reinforcement, RL)作为机器学习领域另一个研究热点，已经广泛应用于工业制造、仿真模拟、机器人控制、优化与调度、游戏博弈等领域。RL的基本思想是通过最大化智能体（agent）从环境中获得的累计奖赏值，以学习到完成目标的最优策略\cite{04}。
+
+\subsection{基于值函数的深度强化学习}
+
+\subsubsection{Q-Learning}
+Q-learning是最经典的基于值的RL方法之一，其核心是Q表的计算，定义为 $Q(s, a)$。Q表的行表示状态的Q值，Q表的列表示动作，衡量当前状态采取该动作有多好。$Q(s, a)$的迭代公式定义如下:
+\begin{equation}
+Q\left( {s_{\rm{t}},a_{\rm{t}}} \right) \leftarrow Q\left( {s_{\rm{t}},a_{\rm{t}}} \right) + \alpha \left[ {r{\rm{ }} + \gamma max_{a_{t + 1}}Q\left( {s_{t+1},a_{t+1}} \right) - Q\left( {s_{\rm{t}},a_{\rm{t}}} \right)} \right]
+\end{equation}
+
+更新Q表的依据是Bellman方程。
+
+在Eq.(1)中，$ \alpha $ 为学习率，$\gamma$为折现因子，在接近0时更关注短期奖励，接近1时更关注长期奖励，r为时刻t+1时的表现\cite{03}。
+
+Q-Learning在相对较小的状态空间中是有效的。
+
+然而，很难解决像AlphaGo这样包含多达10172个状态的大型状态空间的问题，因为一个q表很难存储这么多状态。此外，云环境下数据库的状态也是复杂多样的。例如，假设每个内部度量值的范围从0到100，其值被分割成100个相等的部分。那么63个指标将有$100^{63}$个状态。
+
+因此，将Q-Learning应用于数据库配置调优是不切实际的。
+
+\subsubsection{深度Q网络}
+Mnih等人将卷积神经网络与传统RL中的Ｑ学习算法相结合，提出了深度Ｑ网络（Deep Q-Network, DQN)模型。该模型用于处理基于视觉感知的控制任务，是DRL领域的开创性工作\cite{05}。
+
+\begin{figure}
+\centering
+\includegraphics[scale=.3]{graph1}
+\caption{Q-Learning和DQN的区别\cite{03}}
+\end{figure}
+
+在DQN中，输入是状态，输出是所有动作的q值。但DQN仍然采用Q- learning来更新Q值，因此我们可以将它们之间的关系描述为:
+$$Q\left( {s,{\rm{ }}a,{\rm{ }}\omega } \right){\rm{ }} \to {\rm{ }}Q\left( {s,{\rm{ }}a} \right)$$
+，其中ω($Q\left( {s,{\rm{ }}a,{\rm{ }}\omega } \right)$)表示DQN中神经网络的权值。
+
+不幸的是，DQN是一个面向离散的控制算法，这意味着输出的动作是离散的。以迷宫游戏为例，只能控制四个方向的输出。然而，数据库中的旋钮组合是高维的，许多旋钮组合的值是连续的。例如，如果我们使用266个连续的旋钮，范围从0到100。如果将每个旋钮范围离散为100个区间，则每个旋钮将有100个值。因此在DQN中总共有$100^{266}$个动作(旋钮组合)。此外，一旦旋钮数量增加或间隔减少，输出的规模将呈指数级增长，不能很好地解决一部分高精度数据库调优问题\cite{05}。
+
+\subsection{基于策略的深度强化学习——DDPG}
+
+DDPG(Deep Deterministic Policy Gradient，深度确定性策略梯度)能够根据当前状态立即获取当前连续动作的具体值，而不是像DQN那样计算并存储所有动作对应的q值。因此，DDPG可以学习具有高维状态和动作的策略，特别是内部度量和旋钮配置\cite{03}。通过DDPG算法，我们得以在高维连续空间中找到最优配置，有效地提高优化效率。
+
+\begin{figure}
+\centering
+\includegraphics[scale=.7]{graph2}
+\caption{DDPG在CDBTune的应用\cite{03}}
+\end{figure}
+
+\section{AI+DB的新应用}
+
+\subsection{AI Meets DB}
+传统的经验数据库优化技术（如成本估算、连接顺序选择、旋钮调优、索引、视图顾问等）无法满足大规模数据库实例、各种应用和多样化用户的高性能需求，特别是在云端。
+幸运的是，Learning-Based Techniques（基于学习的技术）可以缓解这个问题\cite{07}。
+AI技术可以为数据库技术带来深刻变革。
+\begin{table}[htbp]%调节图片位置，h：浮动；t：顶部；b:底部；p：当前位置
+	\centering
+	\label{tab:1}  
+	\begin{tabular}{ccc}%表格中的数据居中，c的个数为表格的列数
+		\hline\hline\noalign{\smallskip}	
+		AI4DB新配置 & 原理 & 优化项目  \\
+		\noalign{\smallskip}\hline\noalign{\smallskip}
+		基于学习的数据库配置 & 机器学习 & 自动化数据库配置\\
+		基于学习的数据库优化 & 机器学习 & 解决优化难题（成本估计等\\
+		基于学习的数据库设计 & 机器学习 & 学习索引、设计数据库组件\\
+		基于学习的数据库监控 & 机器学习 & 性能预测、数据库活动、运动情况监视器\\
+		基于学习的数据库安全 & 基于学习的算法 & 敏感数据发现、访问控制、SQL注入\\
+		\noalign{\smallskip}\hline	
+	\end{tabular}
+	\caption{AI for Database\cite{04}}
+\end{table}
+
+\subsection{CDBTune}
+腾讯数据库与华中科技大学数据智能团队合力设计了一个端到端CDB自动调谐系统CDBTune，使用深度强化学习(RL)。CDBTune利用深度确定性策略梯度方法在高维连续空间中寻找最优配置。CDBTune采用试错策略，在有限的样本中学习旋钮设置，完成初始训练，减轻了采集大量高质量样本的难度\cite{05}。
+
+CDBTune采用了强化学习中的奖励-反馈机制，而不是传统的回归，实现了端到端学习，加快了模型的收敛速度，提高了在线调优的效率。研究人员在真实的云数据库上进行了6种不同工作负载下的大量实验，以证明CDBTune的优越性。实验结果表明，CDBTune具有良好的适应性，并且显著优于最先进的调优工具和DBA专家\cite{07}。
+
+\begin{figure}
+\centering
+\includegraphics[scale=.2]{graph4}
+\caption{System Architecture\cite{05}}
+\end{figure}
+\subsection{Hunter}
+基于传统数据库的特性，数据库在新形势下的使用中还存在下列问题：
+
+1.针对非常不同的工作负载进行调优的各种限制，预先训练的模型不匹配，或在给定新的工作负载时推荐次优配置。
+
+2.如果系统以在线方式进行配置调优，则会出现冷启动的问题，导致调优时间长，性能波动大。
+
+为了解决这些问题，一个名为HUNTER的在线CDB调优系统应运而生。
+
+HUNTER的关键特征是混合架构，它使用遗传算法生成的样本来预热深度强化学习的更细粒度探索。同时，研究者采用主成分分析、随机森林和快速探索策略来减少学习模型的搜索空间和更新时间。
+
+此外，研究者进一步提出了一种克隆和并行化方案，用于在多个克隆CDB实例(CDB)上对工作负载进行压力测试，从而实现更快、更安全的配置探索。在CDB上对公共工作负载和实际工作负载进行的大量试验表明，在相同的时间预算和资源的情况下，HUNTER可以显著提高性能，与最先进的调优系统相比，缩短了推荐时间，使用1个和20个克隆cdb的加速分别高达2.8倍和22.8倍\cite{04}。
+
+\begin{figure}
+\centering
+\includegraphics[scale=.5]{graph3}
+\caption{Throughput with different cost\cite{04}}
+\end{figure}
+
+\section{结语}
+本篇论文中，作者就现有数据库的设计与限制出发，讨论AI4DB的全新可能性，并通过CDBTune和Hunter两项应用实例和数据分析，显著提高了数据库的性能与调优速度，开启数据库发展的新纪元。
+
+人工智能(AI)和数据库(DB)在过去的50年里得到了广泛的研究。过去，两项技术独立发展，而在AI繁荣的新盛世中，它们又将融合发展、共同进步。
+
+AI可以使数据库更加智能(AI4DB)。传统数据库设计基于经验方法和规范，且需人工参与来调优与维护。通过机器学习和强化学习技术，我们可以以 Try—Error 方法来部署面向数据库的人工智能应用，从而达到优化数据库配置、解决数据库应用需求的绝佳效果。以CDBTune和Hunter为代表的的AI4DB智能数据库，是数据库未来发展的缩影。通过设计奖励函数、强化学习与深度学习、DDPG算法等优化途径，云数据库调优的问题得到了高效的处理；Hunter应用于CDB调优系统，通过混合架构和遗传算法生成的样本来预热深度强化学习，提出粒度探索、主成分分析、随机森林和快速探索等策略来减少学习模型地搜索空间，并提交克隆与并行化方案，在多克隆CDB实例上实现了更快更安全的配置。
+
+CDBTune和Hunter的成功应用配置，向我们展示了数据库+AI背后潜藏的应用潜力。AI4DB的未来发展不止于此，也将在将来更为强盛。
+\section{致谢}
+首先感谢华中科技大学人工智能与自动化学院的谭山教授，在我学习整个文献检索与科技论文写作课程的过程中提供了莫大的帮助！同时感谢华中科技大学数据智能团队的老师和同学，他们在我完成论文期间为我耐心答疑解惑，填补了我在数据库领域的诸多空白。最后依旧感谢勤恳努力研究的自己，不管这次论文结果如何，为了自己执着的事情而奋力努力，都应该说一声——“太酷啦”！
+
+再次感谢各位前辈、同学在我学习、写作方面的帮助与支持！
+
+
+
+\begin{thebibliography}{99}
+\bibitem{01}俞海,顾金媛. 数据库基本原理及应用开发教程[M].南京大学出版社:应用型本科计算机类专业“十三五”规划教材, 201705.250.
+\bibitem{02}王珊,王会举,覃雄派等.架构大数据: 挑战, 现状与展望[J]. 计算机学报, 2011, 34(10): 1741-1752.
+\bibitem{03}Oracle and/or its affiliates Oracle. Autonomous Database Technical Overview[R].Oracle China,{\url{https://www.oracle.com/cn/a/ocom/docs/database/oracle-autonomous-database-technical-overview.pdf}}
+\bibitem{04}Li G, Zhou X, Cao L. AI meets database: AI4DB and DB4AI[C].Proceedings of the 2021 International Conference on Management of Data. 2021: 2859-2866.
+\bibitem{05}Zhang J, Liu Y, Zhou K, et al. An end-to-end automatic cloud database tuning system using deep reinforcement learning[C].Proceedings of the 2019 International Conference on Management of Data. 2019: 415-432.
+\bibitem{06}Cai B, Liu Y, Zhang C, et al. HUNTER: an online cloud database hybrid tuning system for personalized requirements[C].Proceedings of the 2022 International Conference on Management of Data. 2022: 646-659.
+\bibitem{07}Zhang J, Zhou K, Li G, et al. CDBTune+: An efficient deep reinforcement learning-based automatic cloud database tuning system[J]. The VLDB Journal, 2021, 30(6): 959-987.
+
+\end{thebibliography}
+
+
+\end{document}
